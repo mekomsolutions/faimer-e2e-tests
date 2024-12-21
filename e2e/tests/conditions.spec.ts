@@ -1,29 +1,33 @@
 import { test, expect } from '@playwright/test';
-import { OpenMRS } from '../utils/pages/home-page';
+import { HomePage } from '../utils/pages/home-page';
 import { ConditionsPage } from '../utils/pages/conditions-page';
 import { VisitsPage } from '../utils/pages/visits-page';
+import { RegistrationPage } from '../utils/pages/registration-page';
 
-let openmrs: OpenMRS;
-let conditions: ConditionsPage;
-let visits: VisitsPage;
+let homePage: HomePage;
+let visitsPage: VisitsPage;
+let conditionsPage: ConditionsPage;
+let registrationPage: RegistrationPage;
 
 test.beforeEach(async ({ page }) => {
-  openmrs = new OpenMRS(page);
-  conditions = new ConditionsPage(page);
-  visits = new VisitsPage(page);
+  homePage = new HomePage(page);
+  visitsPage = new VisitsPage(page);
+  conditionsPage = new ConditionsPage(page);
+  registrationPage = new RegistrationPage(page);
 
-  await openmrs.login();
-  await openmrs.createPatient();
+  await homePage.login();
+  await registrationPage.navigateToRegistrationForm();
+  await registrationPage.createPatient();
 });
 
 test('Add a condition', async ({}) => {
   // setup
-  const dataRow = conditions.conditionsTable().locator('tbody > tr');
-  await visits.startPatientVisit();
+  const dataRow = conditionsPage.conditionsTable().locator('tbody > tr');
+  await visitsPage.startPatientVisit();
   
   // replay
-  await conditions.navigateToConditionsPage();
-  await conditions.addPatientCondition();
+  await conditionsPage.navigateToConditionsPage();
+  await conditionsPage.addPatientCondition();
 
   // verify
   await expect(dataRow).toContainText(/typhoid fever/i);
@@ -31,41 +35,41 @@ test('Add a condition', async ({}) => {
   await expect(dataRow).toContainText(/active/i);
 });
 
-test('Edit a condition', async ({}) => {
+test('Edit a condition', async ({page}) => {
   // setup
-  const dataRow = conditions.conditionsTable().locator('tbody > tr');
-  await visits.startPatientVisit();
-  await conditions.navigateToConditionsPage();
-  await conditions.addPatientCondition();
+  const dataRow = conditionsPage.conditionsTable().locator('tbody > tr');
+  await visitsPage.startPatientVisit();
+  await conditionsPage.navigateToConditionsPage();
+  await conditionsPage.addPatientCondition();
   await expect(dataRow).toContainText(/typhoid fever/i);
   await expect(dataRow).toContainText(/jul 2023/i);
   await expect(dataRow).toContainText(/active/i);
 
   // replay
-  await conditions.editPatientCondition();
+  await conditionsPage.editPatientCondition();
 
   // verify
-  await conditions.page.getByRole('combobox', { name: /show/i }).click();
-  await conditions.page.getByText('All', {exact: true}).click();
+  await page.getByRole('combobox', { name: /show/i }).click();
+  await page.getByText('All', {exact: true}).click();
   await expect(dataRow).toContainText(/typhoid fever/i);
   await expect(dataRow).not.toContainText(/jul 2023/i);
   await expect(dataRow).toContainText(/aug 2023/i);
   await expect(dataRow).toContainText(/inactive/i);
 });
 
-test('Delete a condition', async ({}) => {
+test('Delete a condition', async ({ page }) => {
   // setup
-  await visits.startPatientVisit();
-  await conditions.navigateToConditionsPage();
-  await conditions.addPatientCondition();
+  await visitsPage.startPatientVisit();
+  await conditionsPage.navigateToConditionsPage();
+  await conditionsPage.addPatientCondition();
 
   // replay
-  await conditions.voidPatientCondition();
+  await conditionsPage.voidPatientCondition();
 
   // verify
-  await expect(conditions.page.getByText(/there are no conditions to display for this patient/i)).toBeVisible();
+  await expect(page.getByText(/there are no conditions to display for this patient/i)).toBeVisible();
 });
 
 test.afterEach(async ({}) => {
-  await openmrs.voidPatient();
+  await homePage.voidPatient();
 });

@@ -11,7 +11,6 @@ import {
 
 dotenv.config();
 
-
 async function globalSetup() {
   const requestContext = await request.newContext();
   const token = Buffer.from(`${process.env.O3_USERNAME}:${process.env.O3_PASSWORD}`).toString(

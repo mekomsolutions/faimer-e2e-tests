@@ -16,9 +16,9 @@ export class OrdersPage {
   }
 
   async saveLabOrder() {
-    await this.page.getByRole('button', { name: 'Save order' }).click();
-    await this.page.getByRole('button', { name: 'Sign and close' }).click();
-    await expect(this.page.getByText('Placed orders')).toBeVisible();
+    await this.page.getByRole('button', { name: /save order/i }).click();
+    await this.page.getByRole('button', { name: /sign and close/i }).click();
+    await expect(this.page.getByText(/placed orders/i)).toBeVisible();
   }
 
   async modifyLabOrder() {
@@ -27,7 +27,7 @@ export class OrdersPage {
     await this.page.getByLabel(/clear selected item/i).click();
     await this.page.getByLabel('Open', { exact: true }).click();
     await this.page.getByText('Stat', { exact: true }).click();
-    await this.page.getByLabel('Additional instructions').fill('Take urine sample');
+    await this.page.getByLabel(/additional instructions/i).fill('Take urine sample');
   }
 
   async cancelLabOrder() {

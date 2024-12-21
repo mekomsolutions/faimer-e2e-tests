@@ -11,7 +11,7 @@ export class ConditionsPage {
 
   async addPatientCondition() {
     await this.page.getByText(/record conditions/i).click();
-    await this.page.getByPlaceholder('Search conditions').fill('Typhoid fever');
+    await this.page.getByPlaceholder(/search conditions/i).fill('Typhoid fever');
     await this.page.getByRole('menuitem', { name: 'Typhoid fever' }).click();
     await this.page.getByLabel('Onset date').fill('27/07/2023');
     await this.page.getByLabel('Onset date').press('Enter');

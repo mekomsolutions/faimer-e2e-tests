@@ -36,14 +36,11 @@ export class MedicationsPage {
   }
 
   async modifyDrugOrder() {
-    await this.page.getByPlaceholder('Dose').clear();
     await this.page.getByPlaceholder('Dose').fill('8');
     await this.page.getByLabel('Clear selected item').nth(2).click();
     await this.page.getByPlaceholder('Frequency').click();
     await this.page.getByText('Thrice daily').click();
-    await this.page.getByLabel('Duration', { exact: true }).clear();
     await this.page.getByLabel('Duration', { exact: true }).fill('6');
-    await this.page.getByLabel(/quantity to dispense/i).clear();
     await this.page.getByLabel(/quantity to dispense/i).fill('8');
     await this.page.getByRole('button', { name: /save order/i }).dispatchEvent('click');
     await this.page.getByRole('button', { name: /sign and close/i }).dispatchEvent('click');

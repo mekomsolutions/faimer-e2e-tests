@@ -1,58 +1,64 @@
 import { test, expect } from '@playwright/test';
-import { OpenMRS } from '../utils/pages/home-page';
+import { HomePage } from '../utils/pages/home-page';
 import { VisitsPage } from '../utils/pages/visits-page';
+import { RegistrationPage } from '../utils/pages/registration-page';
 
-let openmrs: OpenMRS;
-let visits: VisitsPage;
+let homePage: HomePage;
+let visitsPage: VisitsPage;
+let registrationPage: RegistrationPage;
 
 test.beforeEach(async ({ page }) => {
-  openmrs = new OpenMRS(page);
-  visits = new VisitsPage(page);
+  homePage = new HomePage(page);
+  visitsPage = new VisitsPage(page);
+  registrationPage = new RegistrationPage(page);
 
-  await openmrs.login();
+  await homePage.login();
 });
 
-test('Start patient visit.', async ({}) => {
+test('Start patient visit', async ({ page }) => {
   // setup
-  await openmrs.createPatient();
+  await registrationPage.navigateToRegistrationForm();
+  await registrationPage.createPatient();
 
   // replay
-  await visits.startPatientVisit();
+  await visitsPage.startPatientVisit();
 
   // verify
-  await visits.navigateToVisitsPage();
-  await expect(visits.page.getByRole('heading', {name: 'Facility Visit'})).toBeVisible();
-  await expect(visits.page.getByText(/active visit/i)).toBeVisible();
+  await visitsPage.navigateToVisitsPage();
+  await expect(page.getByRole('heading', {name: 'Facility Visit'})).toBeVisible();
+  await expect(page.getByText(/active visit/i)).toBeVisible();
 });
 
-test('Edit patient visit.', async ({}) => {
+test('Edit patient visit', async ({ page }) => {
   // setup
-  await openmrs.createPatient();
-  await visits.startPatientVisit();
-  await visits.navigateToVisitsPage();
-  await expect(visits.page.getByRole('heading', {name: 'Facility Visit'})).toBeVisible();
+  await registrationPage.navigateToRegistrationForm();
+  await registrationPage.createPatient();
+  await visitsPage.startPatientVisit();
+  await visitsPage.navigateToVisitsPage();
+  await expect(page.getByRole('heading', {name: 'Facility Visit'})).toBeVisible();
 
   // replay
-  await visits.editPatientVisit();
+  await visitsPage.editPatientVisit();
 
   // verify
-  await expect(visits.page.getByRole('heading', {name: 'Facility Visit'})).not.toBeVisible();
-  await expect(visits.page.getByRole('heading', {name: 'Home Visit'})).toBeVisible();
-  await expect(visits.page.getByText(/active visit/i)).toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Facility Visit'})).not.toBeVisible();
+  await expect(page.getByRole('heading', {name: 'Home Visit'})).toBeVisible();
+  await expect(page.getByText(/active visit/i)).toBeVisible();
 });
 
-test('End patient visit.', async ({}) => {
+test('End patient visit', async ({ page }) => {
   // setup
-  await openmrs.createPatient();
-  await visits.startPatientVisit();
+  await registrationPage.navigateToRegistrationForm();
+  await registrationPage.createPatient();
+  await visitsPage.startPatientVisit();
 
   // replay
-  await visits.endPatientVisit();
+  await visitsPage.endPatientVisit();
 
   // verify
-  await expect(visits.page.getByText(/active visit/i)).not.toBeVisible();
+  await expect(page.getByText(/active visit/i)).not.toBeVisible();
 });
 
 test.afterEach(async ({}) => {
-  await openmrs.voidPatient();
+  await homePage.voidPatient();
 });

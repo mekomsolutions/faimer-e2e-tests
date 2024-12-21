@@ -1,52 +1,54 @@
 import { test, expect } from '@playwright/test';
-import { delay, OpenMRS } from '../utils/pages/home-page';
+import { delay, HomePage } from '../utils/pages/home-page';
 import { OrdersPage } from '../utils/pages/orders-page';
 import { VisitsPage } from '../utils/pages/visits-page';
+import { RegistrationPage } from '../utils/pages/registration-page';
 
-let openmrs: OpenMRS;
-let orders: OrdersPage;
-let visits: VisitsPage;
+let homePage: HomePage;
+let visitsPage: VisitsPage;
+let ordersPage: OrdersPage;
+let registrationPage: RegistrationPage;
 
 test.beforeEach(async ({ page }) => {
-  openmrs = new OpenMRS(page);
-  orders = new OrdersPage(page);
-  visits = new VisitsPage(page);
+  homePage = new HomePage(page);
+  visitsPage = new VisitsPage(page);
+  ordersPage = new OrdersPage(page);
+  registrationPage = new RegistrationPage(page);
 
-  await openmrs.login();
-  await openmrs.createPatient();
-  await visits.startPatientVisit();
+  await homePage.login();
+  await registrationPage.navigateToRegistrationForm();
+  await registrationPage.createPatient();
+  await visitsPage.startPatientVisit();
 });
 
-test('Add a lab test.', async ({ page }) => {
+test('Add a lab test', async ({ page }) => {
   // setup
-  await orders.navigateToLabOrderForm();
+  await ordersPage.navigateToLabOrderForm();
 
   // replay
-  await page.getByRole('searchbox').fill('Bacteriuria test, urine');
-  await delay(2500);
+  await page.getByRole('searchbox').fill('Bacteriuria test, urine'), delay(2500);
   await page.getByRole('button', { name: /order form/i }).click();
-  await orders.saveLabOrder();
+  await ordersPage.saveLabOrder();
 
   // verify
-  await orders.navigateToOrdersPage();
+  await ordersPage.navigateToOrdersPage();
   await expect(page.getByRole('cell', { name: /test order/i })).toBeVisible();
   await expect(page.getByRole('cell', { name: /bacteriuria test, urine/i })).toBeVisible();
 });
 
-test('Modify a lab order.', async ({ page }) => {
+test('Modify a lab order', async ({ page }) => {
   // setup
-  await orders.navigateToLabOrderForm();
-  await page.getByRole('searchbox').fill('Blood urea nitrogen');
-  await delay(2500);
+  await ordersPage.navigateToLabOrderForm();
+  await page.getByRole('searchbox').fill('Blood urea nitrogen'), delay(2500);
   await page.getByRole('button', { name: /order form/i }).click();
-  await orders.saveLabOrder();
-  await orders.navigateToOrdersPage();
+  await ordersPage.saveLabOrder();
+  await ordersPage.navigateToOrdersPage();
   await expect(page.getByRole('cell', { name: /blood urea nitrogen/i })).toBeVisible();
   await expect(page.getByRole('cell', { name: /routine/i })).toBeVisible();
 
   // replay
-  await orders.modifyLabOrder();
-  await orders.saveLabOrder();
+  await ordersPage.modifyLabOrder();
+  await ordersPage.saveLabOrder();
 
   // verify
   await expect(page.getByRole('cell', { name: /blood urea nitrogen/i })).toBeVisible();
@@ -54,22 +56,21 @@ test('Modify a lab order.', async ({ page }) => {
   await expect(page.getByRole('cell', { name: /stat/i })).toBeVisible();
 });
 
-test('Discontinue a lab order.', async ({ page }) => {
+test('Discontinue a lab order', async ({ page }) => {
   // setup
-  await orders.navigateToLabOrderForm();
-  await page.getByRole('searchbox').fill('Blood urea nitrogen');
-  await delay(2500);
+  await ordersPage.navigateToLabOrderForm();
+  await page.getByRole('searchbox').fill('Blood urea nitrogen'), delay(2500);
   await page.getByRole('button', { name: /order form/i }).click();
-  await orders.saveLabOrder();
+  await ordersPage.saveLabOrder();
 
   // replay
-  await orders.navigateToOrdersPage();
-  await orders.cancelLabOrder();
+  await ordersPage.navigateToOrdersPage();
+  await ordersPage.cancelLabOrder();
 
   // verify
   await expect(page.getByText(/there are no orders to display for this patient/i)).toBeVisible();
 });
 
 test.afterEach(async ({}) => {
-  await openmrs.voidPatient();
+  await homePage.voidPatient();
 });
