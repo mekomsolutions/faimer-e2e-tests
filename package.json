@@ -1,0 +1,26 @@
+{
+  "name": "faimer-e2e",
+  "version": "next",
+  "license": "MPL-2.0",
+  "files": [
+    "**/*",
+    "!**/.git*/",
+    "!*.gitignore",
+    "!node_modules/",
+    "!test-results/",
+    "!playwright-report/"
+  ],
+  "scripts": {
+    "faimer-e2e": "npx playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "@playwright/test": "^1.49.0",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.22",
+    "@types/react-dom": "^18.2.7",
+    "dotenv": "^16.3.1",
+    "typescript": "^4.5.5"
+  }
+}
