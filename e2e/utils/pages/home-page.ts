@@ -13,6 +13,9 @@ export class HomePage {
 
   readonly patientSearchIcon = () => this.page.locator('[data-testid="searchPatientIcon"]');
   readonly patientSearchBar = () => this.page.locator('[data-testid="patientSearchBar"]');
+  readonly patientAdvancedSearch = () => this.page.locator('button[type="submit"]:text("Search")');
+  readonly floatingSearchResultsContainer = () => this.page.locator('[data-testid="floatingSearchResultsContainer"]');
+  readonly editPatientButton = () => this.page.getByRole('menuitem', { name: /edit patient details/i });
 
   async login() {
     await this.page.goto(`${process.env.O3_URL_DEV}`);
@@ -24,9 +27,8 @@ export class HomePage {
 
   async enterLoginCredentials() {
     await this.page.locator('#username').fill(`${process.env.O3_USERNAME}`);
-    await this.page.getByRole('button', { name: /continue/i }).click();
     await this.page.locator('#password').fill(`${process.env.O3_PASSWORD}`);
-    await this.page.getByRole('button', { name: /sign in/i }).click();
+    await this.page.getByRole('button', { name: /log in/i }).click();
   }
 
   async goToHomePage() {
@@ -39,6 +41,19 @@ export class HomePage {
     await this.patientSearchIcon().click();
     await this.patientSearchBar().fill(searchText);
     await this.page.getByRole('link', { name: `${patientName.firstName + ' ' + patientName.givenName}` }).first().click();
+  }
+
+  async clickOnPatientResult(name: string) {
+    await this.floatingSearchResultsContainer().locator(`text=${name}`).click();
+  }
+
+  async searchPatientId() {
+    await this.searchPatient(`${patientName.firstName + ' ' + patientName.givenName}`);
+    await this.page.getByRole('button', { name: /actions/i, exact: true }).click();
+    await expect(this.editPatientButton()).toBeEnabled();
+    await this.editPatientButton().click(), delay(4000);
+    await expect(this.page.getByText(/identifiers/i, {exact: true})).toBeVisible();
+    await expect(this.page.getByText(/openmrs id/i, {exact: true})).toBeVisible();
   }
 
   async voidPatient() {

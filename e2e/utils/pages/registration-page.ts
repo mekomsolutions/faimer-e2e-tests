@@ -7,6 +7,14 @@ export var patientName = {
   updatedFirstName : ''
 }
 
+export var patientContact = {
+  phoneNumber : '',
+  postalCode : '',
+  province : '',
+  city : '',
+  country : '',
+}
+
 export class RegistrationPage {
   constructor(readonly page: Page) {}
 
@@ -24,6 +32,15 @@ export class RegistrationPage {
       givenName : `${Array.from({ length: 8 }, () => String.fromCharCode(Math.floor(Math.random() * 26) + 97)).join('')}`, 
       updatedFirstName: `${Array.from({ length: 8 }, () => String.fromCharCode(Math.floor(Math.random() * 26) + 97)).join('')}`
     }
+
+    patientContact = {
+      phoneNumber : `077${Math.floor(Math.random() * 10000000)}`,
+      postalCode: `+${Math.floor(Math.random() * 1000)}`,
+      province: `Oriente`,
+      city: `Fernando de la Mora`,
+      country: `Paraguay`,
+    }
+
     await this.page.locator('#givenName').fill(`${patientName.firstName}`);
     await this.page.locator('#familyName').fill(`${patientName.givenName}`);
     await this.page.locator('label').filter({ hasText: /^Male$/ }).locator('span').first().click();
@@ -32,10 +49,11 @@ export class RegistrationPage {
     await this.birthDateInput().locator('[data-type="month"]').fill('02');
     await this.birthDateInput().locator('[data-type="year"]').fill('1999');
     await this.page.locator('#address1').fill('Asunción city');
-    await this.page.locator('#cityVillage').fill('Fernando de la Mora');
-    await this.page.locator('#stateProvince').fill('Oriente');
-    await this.page.locator('#country').fill('Paraguay');
-    await this.page.locator('#phone').fill('+595772630856')
+    await this.page.locator('#cityVillage').fill(`${patientContact.city}`);
+    await this.page.locator('#stateProvince').fill(`${patientContact.province}`);
+    await this.page.locator('#country').fill(`${patientContact.country}`);
+    await this.page.locator('#postalCode').fill(`${patientContact.postalCode}`);
+    await this.page.locator('#phone').fill(`${patientContact.phoneNumber}`)
     await this.page.getByRole('button', { name: /register patient/i }).click();
     await expect(this.page.getByText(/new patient created/i)).toBeVisible(), delay(4000);
   }
