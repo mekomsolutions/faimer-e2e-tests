@@ -23,6 +23,7 @@ export class HomePage {
     await this.page.locator('label').filter({ hasText: /inpatient ward/i }).locator('span').first().click();
     await this.page.getByRole('button', { name: /confirm/i }).click();
     await expect(this.page).toHaveURL(/.*home/);
+    await expect(this.page.getByText(/today's appointments/i)).not.toBeVisible();
   }
 
   async enterLoginCredentials() {

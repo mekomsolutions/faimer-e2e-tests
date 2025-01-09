@@ -31,6 +31,6 @@ export class ProgramsPage {
     await this.page.locator('#completionDateInput').press('Tab');
     await this.page.locator('#location').selectOption('Community Outreach');
     await this.page.getByRole('button', { name: /save and close/i }).click();
-    await expect(this.page.getByText(/program enrollment updated/i)).toBeVisible(), delay(3000);
+    await expect(this.page.getByText(/program enrollment updated/i)).toBeVisible(), delay(5000);
   }
 }

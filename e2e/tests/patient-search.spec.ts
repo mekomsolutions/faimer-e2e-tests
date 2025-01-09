@@ -90,6 +90,26 @@ test('Search patient by postal code', async ({ page }) => {
   await expect(page.locator('header[aria-label="patient banner"]').getByText(`${patientName.firstName + ' ' + patientName.givenName}`)).toBeVisible();
 });
 
+test('Search patient by phone number', async ({ page }) => {
+  // setup
+  await registrationPage.navigateToRegistrationForm();
+  await registrationPage.createPatient();
+
+  // replay
+  await homePage.goToHomePage();
+  await homePage.patientSearchIcon().click();
+  await homePage.patientSearchBar().fill('e2e_test'), delay(3000);
+  await homePage.patientAdvancedSearch().click(), delay(2000);
+  await page.locator("//input[contains(@class, 'cds--text-input')]").nth(1).fill(`${patientContact.phoneNumber}`);
+  await page.getByRole('button', { name: /apply/i }).click(), delay(2000);
+
+  // verify
+  await expect(page.getByText(/1 search result/)).toBeVisible();
+  await expect(page.getByText(`${patientName.firstName} ${patientName.givenName}`)).toBeVisible();
+  await page.getByRole('link', { name: `${patientName.firstName}  ${patientName.givenName}`}).click();
+  await expect(page.locator('header[aria-label="patient banner"]').getByText(`${patientName.firstName + ' ' + patientName.givenName}`)).toBeVisible();
+});
+
 test.afterEach(async ({}) => {
   await homePage.voidPatient();
 });
