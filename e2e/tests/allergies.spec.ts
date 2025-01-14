@@ -53,7 +53,7 @@ test('Edit an allergy', async ({}) => {
   await expect(dataRow).toContainText(/gas and bloating after eating boiled eggs/i);
 
   // replay
-  await allergiesPage.editPatientAllergies();
+  await allergiesPage.updatePatientAllergies();
 
   // verify
   await expect(dataRow).not.toContainText(/dairy food/i);

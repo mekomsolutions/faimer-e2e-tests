@@ -22,12 +22,12 @@ export class ProgramsPage {
     await expect(this.page.getByText(/program enrollment saved/i)).toBeVisible(), delay(3000);
   }
 
-  async editPatientProgramEnrollment() {
+  async updatePatientProgramEnrollment() {
     await this.editProgramButton().click();
     await this.page.locator('#enrollmentDateInput').clear();
-    await this.page.locator('#enrollmentDateInput').fill('16/08/2024');
+    await this.page.locator('#enrollmentDateInput').fill('16/09/2024');
     await this.page.locator('#completionDateInput').clear();
-    await this.page.locator('#completionDateInput').fill('21/08/2024');
+    await this.page.locator('#completionDateInput').fill('21/09/2024');
     await this.page.locator('#completionDateInput').press('Tab');
     await this.page.locator('#location').selectOption('Community Outreach');
     await this.page.getByRole('button', { name: /save and close/i }).click();

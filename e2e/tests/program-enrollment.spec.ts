@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../utils/pages/home-page';
 import { VisitsPage } from '../utils/pages/visits-page';
-import { RegistrationPage } from '../utils/pages/registration-page';
+import { patientName, RegistrationPage } from '../utils/pages/registration-page';
 import { ProgramsPage } from '../utils/pages/program-page';
 
 let homePage: HomePage;
@@ -55,16 +55,18 @@ test('Edit a program enrollment', async ({ page }) => {
   await expect(dataRow).toContainText(/completed on 20-Aug-2024/i);
 
   // replay
-  await programsPage.editPatientProgramEnrollment();
+  await programsPage.updatePatientProgramEnrollment();
 
   // verify
+  await homePage.searchPatient(`${patientName.firstName + ' ' + patientName.givenName}`);
+  await programsPage.navigateToProgramsPage();
   await expect(dataRow).toContainText(/hiv care and treatment/i);
   await expect(dataRow).not.toContainText(/outpatient clinic/i);
   await expect(dataRow).toContainText(/community outreach/i);
   await expect(dataRow).not.toContainText(/15-Aug-2024/i);
-  await expect(dataRow).toContainText(/16-Aug-2024/i);
+  await expect(dataRow).toContainText(/16-Sept-2024/i);
   await expect(dataRow).not.toContainText(/completed on 20-Aug-2024/i);
-  await expect(dataRow).toContainText(/completed on 21-Aug-2024/i);
+  await expect(dataRow).toContainText(/completed on 21-Sept-2024/i);
 });
 
 test.afterEach(async ({}) => {

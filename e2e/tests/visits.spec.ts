@@ -38,7 +38,7 @@ test('Edit patient visit', async ({ page }) => {
   await expect(page.getByRole('heading', {name: 'Facility Visit'})).toBeVisible();
 
   // replay
-  await visitsPage.editPatientVisit();
+  await visitsPage.updatePatientVisit();
 
   // verify
   await expect(page.getByRole('heading', {name: 'Facility Visit'})).not.toBeVisible();

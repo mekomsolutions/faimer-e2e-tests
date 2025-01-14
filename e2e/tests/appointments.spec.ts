@@ -44,7 +44,7 @@ test('Edit an appointment', async ({ page }) => {
   await expect(page.getByRole('cell', { name: /this is an appointment./i })).toBeVisible();
 
   // replay
-  appointmentsPage.editPatientAppointment();
+  appointmentsPage.updatePatientAppointment();
   
   // verify
   await expect(page.getByRole('cell', { name: /general medicine service/i })).not.toBeVisible();
