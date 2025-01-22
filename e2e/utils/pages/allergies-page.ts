@@ -21,7 +21,7 @@ export class AllergiesPage {
     await expect(this.page.getByText(/allergy saved/i)).toBeVisible(), delay(2000);
   }
 
-  async editPatientAllergies() {
+  async updatePatientAllergies() {
     await this.page.getByRole('button', { name: /options/i }).nth(0).click();
     await this.page.getByRole('menuitem', { name: /edit/i }).click();
     await this.page.getByPlaceholder(/select the allergen/i).click();

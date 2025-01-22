@@ -46,7 +46,7 @@ test('Edit a condition', async ({page}) => {
   await expect(dataRow).toContainText(/active/i);
 
   // replay
-  await conditionsPage.editPatientCondition();
+  await conditionsPage.updatePatientCondition();
 
   // verify
   await page.getByRole('combobox', { name: /show/i }).click();

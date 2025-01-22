@@ -20,7 +20,7 @@ export class ConditionsPage {
     await expect(this.page.getByText(/condition saved successfully/i)).toBeVisible();
   }
 
-  async editPatientCondition() {
+  async updatePatientCondition() {
     await this.page.getByRole('button', { name: /options/i }).click();
     await this.page.getByRole('menuitem', { name: /edit/i }).click();
     await this.page.locator('label').filter({ hasText: 'Inactive' }).click();

@@ -20,7 +20,7 @@ export class VisitsPage {
     await expect(this.page.getByText(/facility visit started successfully/i)).toBeVisible(), delay(3000);
   }
 
-  async editPatientVisit() {
+  async updatePatientVisit() {
     await this.page.getByRole('button', { name: /edit visit details/i }).click();
     await this.page.locator('label').filter({ hasText: 'Home Visit' }).locator('span').first().click();
     await this.page.getByRole('button', { name: /update visit/i }).click(), delay(3000);

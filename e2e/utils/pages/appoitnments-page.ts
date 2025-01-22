@@ -21,7 +21,7 @@ export class AppointmentsPage {
     await this.page.getByRole('tab', { name: /today/i }).click();
   }
 
-  async editPatientAppointment() {
+  async updatePatientAppointment() {
     await this.page.getByRole('tab', { name: /today/i }).click();
     await this.page.getByRole('button', { name: /options/i }).click();
     await this.page.getByRole('menuitem', { name: /edit/i }).click();
