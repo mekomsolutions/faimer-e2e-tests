@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { patientName } from './registration-page';
+import { firstUser, secondUser } from './keycloak';
 
 export const delay = (mills) => {
   const endTime = Date.now() + mills;
@@ -19,26 +20,41 @@ export class HomePage {
 
   async login() {
     await this.page.goto(`${process.env.O3_URL_DEV}`);
+    await this.page.locator('#username').fill(`${process.env.O3_USERNAME}`);
     await this.enterLoginCredentials();
-    await this.page.locator('label').filter({ hasText: /inpatient ward/i }).locator('span').first().click();
+  }
+
+  async loginWithFirstUser() {
+    await this.page.locator('#username').fill(`${firstUser.userName}`);
+    await this.enterLoginCredentials();
+  }
+
+  async loginWithSecondUser() {
+    await this.page.locator('#username').fill(`${secondUser.userName}`);
+    await this.page.locator('#password').fill(`${process.env.O3_PASSWORD}`);
+    await this.page.getByRole('button', { name: /log in/i }).click();
+    await this.page.locator('label').filter({ hasText: /Outpatient Clinic/ }).locator('span').first().click();
     await this.page.getByRole('button', { name: /confirm/i }).click();
     await expect(this.page).toHaveURL(/.*home/);
     await expect(this.page.getByText(/today's appointments/i)).not.toBeVisible();
   }
 
   async enterLoginCredentials() {
-    await this.page.locator('#username').fill(`${process.env.O3_USERNAME}`);
     await this.page.locator('#password').fill(`${process.env.O3_PASSWORD}`);
     await this.page.getByRole('button', { name: /log in/i }).click();
+    await this.page.locator('label').filter({ hasText: /inpatient ward/i }).locator('span').first().click();
+    await this.page.getByRole('button', { name: /confirm/i }).click();
+    await expect(this.page).toHaveURL(/.*home/);
+    await expect(this.page.getByText(/today's appointments/i)).not.toBeVisible();
   }
 
-  async goToHomePage() {
+  async navigateToHomePage() {
     await this.page.goto(`${process.env.O3_URL_DEV}/openmrs/spa/home`);
     await expect(this.page).toHaveURL(/.*home/);
   }
 
   async searchPatient(searchText: string) {
-    await this.goToHomePage();
+    await this.navigateToHomePage();
     await this.patientSearchIcon().click();
     await this.patientSearchBar().fill(searchText);
     await this.page.getByRole('link', { name: `${patientName.firstName + ' ' + patientName.givenName}` }).first().click();
@@ -55,6 +71,18 @@ export class HomePage {
     await this.editPatientButton().click(), delay(4000);
     await expect(this.page.getByText(/identifiers/i, {exact: true})).toBeVisible();
     await expect(this.page.getByText(/openmrs id/i, {exact: true})).toBeVisible();
+  }
+
+  async navigateToLoginPage() {
+    await this.page.goto(`${process.env.O3_URL_DEV}`);
+    await expect(this.page.locator('#username')).toBeVisible();
+    await expect(this.page.locator('#password')).toBeVisible();
+  }
+
+  async logout() {
+    await this.page.getByRole('button', { name: /my account/i }).click();
+    await this.page.getByRole('button', { name: /logout/i }).click(), delay(2000);
+    await this.page.getByRole('button', { name: /logout/i }).click();
   }
 
   async voidPatient() {
