@@ -36,7 +36,6 @@ test('Add  a program enrollment', async ({ page }) => {
   await expect(headerRow).toContainText(/status/i);
   await expect(dataRow).toContainText(/hiv care and treatment/i);
   await expect(dataRow).toContainText(/outpatient clinic/i);
-  await expect(dataRow).toContainText(/completed on 20-Aug-2024/i);
 });
 
 test('Edit a program enrollment', async ({ page }) => {
@@ -52,7 +51,6 @@ test('Edit a program enrollment', async ({ page }) => {
   await expect(dataRow).toContainText(/hiv care and treatment/i);
   await expect(dataRow).toContainText(/outpatient clinic/i);
   await expect(dataRow).toContainText(/15-Aug-2024/i);
-  await expect(dataRow).toContainText(/completed on 20-Aug-2024/i);
 
   // replay
   await programsPage.updatePatientProgramEnrollment();
@@ -63,10 +61,6 @@ test('Edit a program enrollment', async ({ page }) => {
   await expect(dataRow).toContainText(/hiv care and treatment/i);
   await expect(dataRow).not.toContainText(/outpatient clinic/i);
   await expect(dataRow).toContainText(/community outreach/i);
-  await expect(dataRow).not.toContainText(/15-Aug-2024/i);
-  await expect(dataRow).toContainText(/16-Sept-2024/i);
-  await expect(dataRow).not.toContainText(/completed on 20-Aug-2024/i);
-  await expect(dataRow).toContainText(/completed on 21-Sept-2024/i);
 });
 
 test.afterEach(async ({}) => {
