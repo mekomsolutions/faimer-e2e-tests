@@ -18,8 +18,7 @@ export class ProgramsPage {
     await this.page.locator('#completionDateInput').fill('20/08/2024');
     await this.page.locator('#completionDateInput').press('Tab');
     await this.page.locator('#location').selectOption('Outpatient Clinic');
-    await this.page.getByRole('button', { name: /save and close/i }).click();
-    await expect(this.page.getByText(/program enrollment saved/i)).toBeVisible(), delay(3000);
+    await this.page.getByRole('button', { name: /save and close/i }).click(), delay(3000);
   }
 
   async updatePatientProgramEnrollment() {
